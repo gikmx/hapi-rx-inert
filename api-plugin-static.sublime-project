@@ -2,6 +2,15 @@
 	"folders":
 	[
 		{
+			"file_exclude_patterns":
+			[
+				"api-plugin-static.sublime-project"
+			],
+			"folder_exclude_patterns":
+			[
+				"node_modules",
+				"lib"
+			],
 			"path": "."
 		}
 	]
