@@ -4,7 +4,8 @@
 		{
 			"file_exclude_patterns":
 			[
-				"api-plugin-static.sublime-project"
+				"*.sublime-project",
+				"*.log"
 			],
 			"folder_exclude_patterns":
 			[

@@ -2,45 +2,49 @@
 
 import PATH from 'path';
 
-import Rx    from 'rxjs/Rx';
-import Inert from 'inert';
+import Rx     from 'rxjs/Rx';
+import LoDash from 'lodash';
+import Inert  from 'inert';
 
-export default {
-
-	setup: {
-		connection : {},
-		config     : {
-			connections: {
-				routes: {
-					files: {
-						relativeTo: PATH.resolve(PATH.join('.','static'))
-					}
+const Setup = {
+	name : 'static',
+	opts : { // These are the plugin's options
+		directory: {
+			path            : '.',
+			redirectToSlash : true,
+			index           : true
+		}
+	},
+	conf : {   // these will be used on hapi instantiation
+		connections: {
+			routes: {
+				files: {
+					relativeTo: PATH.resolve(PATH.join('.','static'))
 				}
 			}
 		}
 	},
+	conn : {}, // These will be used on hapi connection setup
+};
 
-	register: (server, name) => Rx.Observable.create(subscriber => {
+export default (setup={}) => {
 
-		let response = {name: name};
+	setup = LoDash.merge(Setup, setup);
+	setup.register = server => Rx.Observable.create(subscriber => {
 
 		server.register(Inert, err => {
 			if (err) return subscriber.error(err);
 			server.route({
 				method  : 'GET',
 				path    : '/static/{param*}',
-				handler : {
-					directory: {
-						path            : '.',
-						redirectToSlash : true,
-						index           : true
-					}
-				}
+				handler : setup.opts
 			});
-			subscriber.next(response);
+			subscriber.next(setup);
 			subscriber.complete();
 		});
 
 		return ()=> {};
-	})
+	});
+
+	return setup;
 }
